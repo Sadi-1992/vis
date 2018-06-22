@@ -5,7 +5,7 @@
  * A dynamic, browser-based visualization library.
  *
  * @version 4.21.0
- * @date    2018-06-21
+ * @date    2018-06-22
  *
  * @license
  * Copyright (C) 2011-2017 Almende B.V, http://almende.com
@@ -9500,6 +9500,8 @@ Core.prototype._create = function (container) {
   this.dom.rightContainer.appendChild(this.dom.shadowTopRight);
   this.dom.rightContainer.appendChild(this.dom.shadowBottomRight);
 
+  this.tmpData = {};
+
   // size properties of each of the panels
   this.props = {
     root: {},
@@ -10292,15 +10294,57 @@ Core.prototype._redraw = function () {
   dom.root.style.width = util.option.asSize(options.width, '');
 
   // calculate border widths
-  props.border.left = (dom.centerContainer.offsetWidth - dom.centerContainer.clientWidth) / 2;
-  console.log('props.border.left: ' + props.border.left);
+  if (!this.tmpData || !this.tmpData.left) {
+    this.tmpData = {
+      left: (dom.centerContainer.offsetWidth - dom.centerContainer.clientWidth) / 2,
+      top: (dom.centerContainer.offsetHeight - dom.centerContainer.clientHeight) / 2,
+      height: dom.root.offsetHeight - dom.root.clientHeight,
+      width: dom.root.offsetWidth - dom.root.clientWidth
+    };
+  }
+
+  var tmp = {
+    left: (dom.centerContainer.offsetWidth - dom.centerContainer.clientWidth) / 2,
+    top: (dom.centerContainer.offsetHeight - dom.centerContainer.clientHeight) / 2,
+    height: dom.root.offsetHeight - dom.root.clientHeight,
+    width: dom.root.offsetWidth - dom.root.clientWidth
+  };
+
+  var difLeft = this.tmpData.left - tmp.left;
+  var difTop = this.tmpData.top - tmp.top;
+  var difHeight = this.tmpData.height - tmp.height;
+  var difWidth = this.tmpData.width - tmp.width;
+
+  if (difLeft <= 3 || difLeft >= -3) {
+    props.border.left = this.tmpData.left;
+  } else {
+    props.border.left = tmp.left;
+    this.tmpData.left = tmp.left;
+  }
+
+  if (difTop <= 3 || difTop >= -3) {
+    props.border.top = this.tmpData.top;
+  } else {
+    props.border.top = tmp.top;
+    this.tmpData.top = tmp.top;
+  }
+
+  if (difHeight <= 3 || difHeight >= -3) {
+    props.borderRootHeight = this.tmpData.height;
+  } else {
+    props.borderRootHeight = tmp.height;
+    this.tmpData.height = tmp.height;
+  }
+
+  if (difWidth <= 3 || difWidth >= -3) {
+    props.borderRootWidth = this.tmpData.width;
+  } else {
+    props.borderRootWidth = tmp.width;
+    this.tmpData.width = tmp.width;
+  }
+
   props.border.right = props.border.left;
-  props.border.top = (dom.centerContainer.offsetHeight - dom.centerContainer.clientHeight) / 2;
   props.border.bottom = props.border.top;
-  console.log('props.border.top: ' + props.border.top);
-  props.borderRootHeight = dom.root.offsetHeight - dom.root.clientHeight;
-  props.borderRootWidth = dom.root.offsetWidth - dom.root.clientWidth;
-  console.log('props.borderRootHeight: ' + props.borderRootHeight);
 
   // workaround for a bug in IE: the clientWidth of an element with
   // a height:0px and overflow:hidden is not calculated and always has value 0

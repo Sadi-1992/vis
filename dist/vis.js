@@ -4,8 +4,8 @@
  *
  * A dynamic, browser-based visualization library.
  *
- * @version 4.21.0
- * @date    2018-06-22
+ * @version 4.21.1
+ * @date    2018-07-16
  *
  * @license
  * Copyright (C) 2011-2017 Almende B.V, http://almende.com
@@ -10315,28 +10315,28 @@ Core.prototype._redraw = function () {
   var difHeight = this.tmpData.height - tmp.height;
   var difWidth = this.tmpData.width - tmp.width;
 
-  if (difLeft <= 3 || difLeft >= -3) {
+  if (difLeft <= 5 || difLeft >= -5) {
     props.border.left = this.tmpData.left;
   } else {
     props.border.left = tmp.left;
     this.tmpData.left = tmp.left;
   }
 
-  if (difTop <= 3 || difTop >= -3) {
+  if (difTop <= 5 || difTop >= -5) {
     props.border.top = this.tmpData.top;
   } else {
     props.border.top = tmp.top;
     this.tmpData.top = tmp.top;
   }
 
-  if (difHeight <= 3 || difHeight >= -3) {
+  if (difHeight <= 5 || difHeight >= -5) {
     props.borderRootHeight = this.tmpData.height;
   } else {
     props.borderRootHeight = tmp.height;
     this.tmpData.height = tmp.height;
   }
 
-  if (difWidth <= 3 || difWidth >= -3) {
+  if (difWidth <= 5 || difWidth >= -5) {
     props.borderRootWidth = this.tmpData.width;
   } else {
     props.borderRootWidth = tmp.width;
